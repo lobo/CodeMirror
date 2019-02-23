@@ -1,0 +1,33 @@
+<!doctype html>
+<head>
+  <script src="lib/codemirror.js"></script>
+  <link rel="stylesheet" href="lib/codemirror.css">
+  <link rel="stylesheet" href="theme/neo.css">
+  <script src="mode/javascript/javascript.js"></script>
+  <script src="mode/python/python.js"></script>
+  <script src="mode/cmake/cmake.js"></script>
+  <!-- https://codemirror.net/mode/clike/index.html -->
+
+
+
+	<style>
+		body {
+			background-color: #eeeeee
+		}
+  </style>
+  
+</head>
+<body>
+  <div id="codeeditor"></div>
+  <script>
+    var editor = CodeMirror(document.getElementById("codeeditor"), {
+      //mode: "javascript",
+      theme: "neo",
+      matchBrackets: true,
+      //mode: "text/x-java",
+      lineNumbers: true
+    });
+  </script>
+
+</body>
+</html>
