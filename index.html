@@ -1,7 +1,7 @@
 <!doctype html>
 
 <title>CodeMirror</title>
-<meta charset="utf-8"/>
+<meta charset="utf-8" />
 
 <link rel=stylesheet href="lib/codemirror.css">
 <link rel=stylesheet href="doc/docs.css">
@@ -9,94 +9,171 @@
 <script src="mode/xml/xml.js"></script>
 <script src="mode/javascript/javascript.js"></script>
 <script src="mode/css/css.js"></script>
+<script src="mode/clike/clike.js"></script>
 <script src="mode/htmlmixed/htmlmixed.js"></script>
 <script src="addon/edit/matchbrackets.js"></script>
 
 <script src="doc/activebookmark.js"></script>
 
 <style>
-  .CodeMirror { height: auto; border: 1px solid #ddd; }
-  .CodeMirror-scroll { max-height: 200px; }
-  .CodeMirror pre { padding-left: 7px; line-height: 1.25; }
-  .banner { background: #ffc; padding: 6px; border-bottom: 2px solid silver;  }
-  .banner div { margin: 0 auto; max-width: 700px; text-align: center; }
+  .CodeMirror {
+    height: auto;
+    border: 1px solid #ddd;
+  }
+
+  .CodeMirror-scroll {
+    max-height: 200px;
+  }
+
+  .CodeMirror pre {
+    padding-left: 7px;
+    line-height: 1.25;
+  }
+
+  .banner {
+    background: #ffc;
+    padding: 6px;
+    border-bottom: 2px solid silver;
+  }
+
+  .banner div {
+    margin: 0 auto;
+    max-width: 700px;
+    text-align: center;
+  }
 </style>
 
 <div id=nav>
-  <a href="https://codemirror.net"><h1>CodeMirror</h1><img id=logo src="doc/logo.png"></a>
+  <a href="https://codemirror.net">
+    <h1>CodeMirror</h1>
+    <img id=logo src="doc/logo.png">
+  </a>
 
   <ul>
-    <li><a class=active data-default="true" href="#description">Home</a>
-    <li><a href="doc/manual.html">Manual</a>
-    <li><a href="https://github.com/codemirror/codemirror">Code</a>
-    <li><a href="https://codemirror.net/6/">Version 6</a>
+    <li>
+      <a class=active data-default="true" href="#description">Home</a>
+      <li>
+        <a href="doc/manual.html">Manual</a>
+        <li>
+          <a href="https://github.com/codemirror/codemirror">Code</a>
+          <li>
+            <a href="https://codemirror.net/6/">Version 6</a>
   </ul>
   <ul>
-    <li><a href="#features">Features</a>
-    <li><a href="#community">Community</a>
-    <li><a href="#browsersupport">Browser support</a>
+    <li>
+      <a href="#features">Features</a>
+      <li>
+        <a href="#community">Community</a>
+        <li>
+          <a href="#browsersupport">Browser support</a>
   </ul>
 </div>
 
 <article>
 
-<section id=description class=first>
-  <p><strong>CodeMirror</strong> is a versatile text editor
-  implemented in JavaScript for the browser. It is specialized for
-  editing code, and comes with a number of <a href="mode/index.html">language modes</a> and <a href="doc/manual.html#addons">addons</a>
-  that implement more advanced editing functionality.</p>
+  <section id=description class=first>
+    <p>Insert text here</p>
+  </section>
 
-  <p>A rich <a href="doc/manual.html#api">programming API</a> and a
-  CSS <a href="doc/manual.html#styling">theming</a> system are
-  available for customizing CodeMirror to fit your application, and
-  extending it with new functionality.</p>
-</section>
+  <section id=demo>
+    <h2>Some title</h2>
+    <form style="position: relative; margin-top: .5em;">
+      <textarea id=demotext>
+          /* C demo code */
+    
+          #include <zmq.h>
+          #include <pthread.h>
+          #include <semaphore.h>
+          #include <time.h>
+          #include <stdio.h>
+          #include <fcntl.h>
+          #include <malloc.h>
+          
+          typedef struct {
+            void* arg_socket;
+            zmq_msg_t* arg_msg;
+            char* arg_string;
+            unsigned long arg_len;
+            int arg_int, arg_command;
+          
+            int signal_fd;
+            int pad;
+            void* context;
+            sem_t sem;
+          } acl_zmq_context;
+          
+          #define p(X) (context->arg_##X)
+          
+          void* zmq_thread(void* context_pointer) {
+            acl_zmq_context* context = (acl_zmq_context*)context_pointer;
+            char ok = 'K', err = 'X';
+            int res;
+          
+            while (1) {
+              while ((res = sem_wait(&amp;context->sem)) == EINTR);
+              if (res) {write(context->signal_fd, &amp;err, 1); goto cleanup;}
+              switch(p(command)) {
+              case 0: goto cleanup;
+              case 1: p(socket) = zmq_socket(context->context, p(int)); break;
+              case 2: p(int) = zmq_close(p(socket)); break;
+              case 3: p(int) = zmq_bind(p(socket), p(string)); break;
+              case 4: p(int) = zmq_connect(p(socket), p(string)); break;
+              case 5: p(int) = zmq_getsockopt(p(socket), p(int), (void*)p(string), &amp;p(len)); break;
+              case 6: p(int) = zmq_setsockopt(p(socket), p(int), (void*)p(string), p(len)); break;
+              case 7: p(int) = zmq_send(p(socket), p(msg), p(int)); break;
+              case 8: p(int) = zmq_recv(p(socket), p(msg), p(int)); break;
+              case 9: p(int) = zmq_poll(p(socket), p(int), p(len)); break;
+              }
+              p(command) = errno;
+              write(context->signal_fd, &amp;ok, 1);
+            }
+           cleanup:
+            close(context->signal_fd);
+            free(context_pointer);
+            return 0;
+          }
+          
+          void* zmq_thread_init(void* zmq_context, int signal_fd) {
+            acl_zmq_context* context = malloc(sizeof(acl_zmq_context));
+            pthread_t thread;
+          
+            context->context = zmq_context;
+            context->signal_fd = signal_fd;
+            sem_init(&amp;context->sem, 1, 0);
+            pthread_create(&amp;thread, 0, &amp;zmq_thread, context);
+            pthread_detach(thread);
+            return context;
+          }
+      </textarea>
+      <select id="demolist" onchange="document.location = this.options[this.selectedIndex].value;">
+        <option value="#">Other demos...</option>
+        <option value="demo/complete.html">Autocompletion</option>
+        <option value="demo/folding.html">Code folding</option>
+        <option value="demo/theme.html">Themes</option>
+        <option value="mode/htmlmixed/index.html">Mixed language modes</option>
+        <option value="demo/bidi.html">Bi-directional text</option>
+        <option value="demo/variableheight.html">Variable font sizes</option>
+        <option value="demo/search.html">Search interface</option>
+        <option value="demo/vim.html">Vim bindings</option>
+        <option value="demo/emacs.html">Emacs bindings</option>
+        <option value="demo/sublime.html">Sublime Text bindings</option>
+        <option value="demo/tern.html">Tern integration</option>
+        <option value="demo/merge.html">Merge/diff interface</option>
+        <option value="demo/fullscreen.html">Full-screen editor</option>
+        <option value="demo/simplescrollbars.html">Custom scrollbars</option>
+      </select>
+    </form>
 
-<section id=demo>
-  <h2>This is CodeMirror</h2>
-  <form style="position: relative; margin-top: .5em;"><textarea id=demotext>
-<!-- Create a simple CodeMirror instance -->
-<link rel="stylesheet" href="lib/codemirror.css">
-<script src="lib/codemirror.js"></script>
-<script>
-  var editor = CodeMirror.fromTextArea(myTextarea, {
-    lineNumbers: true
-  });
-</script></textarea>
-  <select id="demolist" onchange="document.location = this.options[this.selectedIndex].value;">
-    <option value="#">Other demos...</option>
-    <option value="demo/complete.html">Autocompletion</option>
-    <option value="demo/folding.html">Code folding</option>
-    <option value="demo/theme.html">Themes</option>
-    <option value="mode/htmlmixed/index.html">Mixed language modes</option>
-    <option value="demo/bidi.html">Bi-directional text</option>
-    <option value="demo/variableheight.html">Variable font sizes</option>
-    <option value="demo/search.html">Search interface</option>
-    <option value="demo/vim.html">Vim bindings</option>
-    <option value="demo/emacs.html">Emacs bindings</option>
-    <option value="demo/sublime.html">Sublime Text bindings</option>
-    <option value="demo/tern.html">Tern integration</option>
-    <option value="demo/merge.html">Merge/diff interface</option>
-    <option value="demo/fullscreen.html">Full-screen editor</option>
-    <option value="demo/simplescrollbars.html">Custom scrollbars</option>
-  </select></form>
 
-  
-  <script>
-    var editor = CodeMirror.fromTextArea(document.getElementById("demotext"), {
-      lineNumbers: true,
-      mode: "text/html",
-      matchBrackets: true
-    });
-  </script>
+    <script>
+      var editor = CodeMirror.fromTextArea(document.getElementById("demotext"), {
+        lineNumbers: true,
+        mode: "text/x-csrc",
+        matchBrackets: true
+      });
+    </script>
 
 
 
-</section>
-
-
-
-
-
-
+  </section>
 </article>
