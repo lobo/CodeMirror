@@ -60,8 +60,9 @@
 <link rel="stylesheet" href="../theme/darcula.css">
 <link rel="stylesheet" href="../theme/zenburn.css">
 <script src="../lib/codemirror.js"></script>
+
 <script src="../mode/javascript/javascript.js"></script>
-<script src="clike.js"></script>
+<script src="../mode/cmake/cmake.js"></script>
 
 <script src="../addon/selection/active-line.js"></script>
 <script src="../addon/edit/matchbrackets.js"></script>
@@ -98,7 +99,7 @@ function findSequence(goal) {
 }</textarea></form>
 
 
-<div><textarea id="c-code">
+<div><textarea id="c-code" name="c-code">
     /* C demo code */
     
     #include <zmq.h>
@@ -233,6 +234,8 @@ function findSequence(goal) {
     matchBrackets: true,
     mode: "text/x-csrc"
   });
+
+
   var input = document.getElementById("select");
   function selectTheme() {
     var theme = input.options[input.selectedIndex].textContent;
